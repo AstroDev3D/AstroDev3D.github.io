@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sayan Mondal | The Creative Alchemist</title>
+    <link rel="icon" href="Sayan Logo.png" type="image/jpeg">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        atom: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            glow: '#0ea5e9',
+                        },
+                        fusion: {
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            glow: '#d946ef',
+                        },
+                        dark: {
+                            bg: '#050505',
+                            card: '#0a0a0a',
+                            border: '#1f1f1f'
+                        },
+                        light: {
+                            bg: '#f8fafc',
+                            card: '#ffffff',
+                            border: '#e2e8f0'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 15s infinite', /* Slower, lighter animation */
+                        'float': 'float 8s ease-in-out infinite', /* Slower float */
+                        'spin-slow': 'spin 15s linear infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styles */
+        :root {
+            --cursor-size: 20px;
+        }
+
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* View Transition Animation Styles */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+        
+        /* Mobile Optimizations */
+        @media (pointer: coarse) {
+            body { cursor: auto; }
+            #cursor, #cursor-dot { display: none !important; }
+        }
+
+        /* Reduced Blur for Mobile Performance */
+        @media (max-width: 768px) {
+            .glass-panel, .glass-card {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+            }
+            .noise-overlay {
+                opacity: 0.2; /* Lighter noise on mobile */
+            }
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.4;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.08%22/%3E%3C/svg%3E');
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
+            border: 1px solid currentColor;
+            background: rgba(125, 125, 125, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+            mix-blend-mode: difference;
+            color: white; 
+        }
+        
+        html:not(.dark) #cursor {
+            mix-blend-mode: normal;
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        #cursor-dot {
+            position: fixed;
+            top: 0; left: 0;
+            width: 4px; height: 4px;
+            background: currentColor;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            color: white;
+            mix-blend-mode: difference;
+        }
+
+        html:not(.dark) #cursor-dot {
+            color: #0ea5e9;
+            mix-blend-mode: normal;
+        }
+
+        body.hover-active #cursor {
+            width: 60px;
+            height: 60px;
+            background: rgba(14, 165, 233, 0.2);
+            border-color: #0ea5e9;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .dark .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-card {
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dark .glass-card {
+            background: rgba(20, 20, 20, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(14, 165, 233, 0.15);
+        }
+        .dark .glass-card:hover {
+            background: rgba(30, 30, 30, 0.6);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+        .glass-card:hover {
+            border-color: rgba(14, 165, 233, 0.5);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Periodic Table Style */
+        .element-card {
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0.75rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .dark .element-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .element-card {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .element-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(var(--glow-color), 0.3);
+            border-color: rgba(var(--glow-color), 0.8);
+        }
+        .element-number { font-size: 0.7rem; opacity: 0.7; }
+        .element-symbol { font-size: 1.8rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+        .element-name { font-size: 0.65rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; width: 0%; height: 2px;
+            background: linear-gradient(90deg, #0ea5e9, #d946ef);
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+        ::selection { background: #0ea5e9; color: white; }
+        .timeline-line { background: linear-gradient(to bottom, #0ea5e9, #d946ef, transparent); }
+
+        /* Mobile Menu Animation */
+        #mobile-menu {
+            clip-path: circle(0px at 100% 0px);
+            transition: clip-path 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        /* Tooltip Arrow */
+        .tooltip-arrow::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        .dark .tooltip-arrow::after {
+            border-color: white transparent transparent transparent;
+        }
+
+        /* === Theme Toggle Button CSS === */
+        .toggle {
+            background-color: #83d8ff;
+            transition: background-color 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+        }
+        .toggle__handler {
+            background-color: #ffcf96;
+            transition: all 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: rotate(-45deg);
+        }
+        .crater {
+            background-color: #e8cda5;
+            opacity: 0;
+            transition: opacity 200ms ease-in-out;
+        }
+        .star {
+            background-color: #fff;
+            transition: all 300ms cubic-bezier(0.445,0.05,0.55,0.95);
+            border-radius: 50%;
+        }
+        /* Checked state (Dark Mode) */
+        .theme-checkbox:checked + label.toggle { background-color: #749dd6; }
+        .theme-checkbox:checked + label.toggle .toggle__handler {
+            background-color: #ffe5b5;
+            transform: translateX(40px) rotate(0deg);
+        }
+        .theme-checkbox:checked + label.toggle .crater { opacity: 1; }
+        .theme-checkbox:checked + label.toggle .star--1 { width: 2px; height: 2px; }
+        .theme-checkbox:checked + label.toggle .star--2 { width: 4px; height: 4px; transform: translateX(-5px); }
+        .theme-checkbox:checked + label.toggle .star--3 { width: 2px; height: 2px; transform: translateX(-7px); }
+        .theme-checkbox:checked + label.toggle .star--4,
+        .theme-checkbox:checked + label.toggle .star--5,
+        .theme-checkbox:checked + label.toggle .star--6 { opacity: 1; transform: translateX(0); }
+        .theme-checkbox:checked + label.toggle .star--4 { transition-delay: 200ms; }
+        .theme-checkbox:checked + label.toggle .star--5 { transition-delay: 300ms; }
+        .theme-checkbox:checked + label.toggle .star--6 { transition-delay: 400ms; }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-atom-500 selection:text-white bg-light-bg dark:bg-dark-bg text-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+
+    <!-- Custom Cursor -->
+    <div id="cursor" class="hidden md:block"></div>
+    <div id="cursor-dot" class="hidden md:block"></div>
+
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 opacity-40"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-40 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-4">
+            <div class="glass-panel rounded-full px-4 md:px-6 py-3 flex justify-between items-center shadow-lg">
+                <!-- Logo -->
+                <a href="#" class="text-lg md:text-xl font-display font-bold tracking-tighter hover-trigger text-gray-900 dark:text-white z-50 relative">
+                    SAYAN<span class="text-atom-500">.</span><span class="text-fusion-500">MONDAL</span>
+                </a>
+
+                <!-- Desktop Links -->
+                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <a href="#about" class="hover:text-atom-600 dark:hover:text-white transition-colors hover-trigger">About</a>
+                    <a href="#projects" class="hover:text-atom-600 dark:hover:text-white transition-colors hover-trigger">Research</a>
+                    <a href="#experience" class="hover:text-atom-600 dark:hover:text-white transition-colors hover-trigger">Experience</a>
+                    <a href="#skills" class="hover:text-atom-600 dark:hover:text-white transition-colors hover-trigger">Elements</a>
+                    
+                    <a href="#contact" class="px-5 py-2 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white transition-all hover-trigger flex items-center gap-2 group">
+                        <span>Contact</span>
+                        <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+
+                    <!-- Theme Toggle (Desktop) -->
+                    <div class="relative w-[50px] h-[28px] flex items-center justify-center">
+                        <div class="transform scale-[0.55] origin-center">
+                            <input type="checkbox" id="theme-toggle-desktop" class="theme-checkbox hidden peer" />
+                            <label for="theme-toggle-desktop" class="toggle relative w-[90px] h-[50px] rounded-full cursor-pointer inline-block shadow-lg">
+                                <span class="toggle__handler absolute top-[3px] left-[3px] w-[44px] h-[44px] rounded-full shadow-md z-[2]">
+                                    <span class="crater crater--1 absolute top-[18px] left-[10px] w-[4px] h-[4px] rounded-full"></span>
+                                    <span class="crater crater--2 absolute top-[28px] left-[22px] w-[6px] h-[6px] rounded-full"></span>
+                                    <span class="crater crater--3 absolute top-[10px] left-[25px] w-[8px] h-[8px] rounded-full"></span>
+                                </span>
+                                <span class="star star--1 absolute top-[10px] left-[35px] w-[30px] h-[3px]"></span>
+                                <span class="star star--2 absolute top-[18px] left-[28px] w-[30px] h-[3px]"></span>
+                                <span class="star star--3 absolute top-[27px] left-[40px] w-[30px] h-[3px]"></span>
+                                <span class="star star--4 absolute top-[16px] left-[11px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
+                                <span class="star star--5 absolute top-[32px] left-[17px] w-[3px] h-[3px] opacity-0 translate-x-[3px]"></span>
+                                <span class="star star--6 absolute top-[36px] left-[28px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Actions (Theme + Menu) -->
+                <div class="md:hidden flex items-center gap-4 z-50">
+                    <!-- Theme Toggle (Mobile) -->
+                    <div class="relative w-[50px] h-[28px] flex items-center justify-center">
+                        <div class="transform scale-[0.55] origin-center">
+                            <input type="checkbox" id="theme-toggle-mobile" class="theme-checkbox hidden peer" />
+                            <label for="theme-toggle-mobile" class="toggle relative w-[90px] h-[50px] rounded-full cursor-pointer inline-block shadow-lg">
+                                <span class="toggle__handler absolute top-[3px] left-[3px] w-[44px] h-[44px] rounded-full shadow-md z-[2]">
+                                    <span class="crater crater--1 absolute top-[18px] left-[10px] w-[4px] h-[4px] rounded-full"></span>
+                                    <span class="crater crater--2 absolute top-[28px] left-[22px] w-[6px] h-[6px] rounded-full"></span>
+                                    <span class="crater crater--3 absolute top-[10px] left-[25px] w-[8px] h-[8px] rounded-full"></span>
+                                </span>
+                                <span class="star star--1 absolute top-[10px] left-[35px] w-[30px] h-[3px]"></span>
+                                <span class="star star--2 absolute top-[18px] left-[28px] w-[30px] h-[3px]"></span>
+                                <span class="star star--3 absolute top-[27px] left-[40px] w-[30px] h-[3px]"></span>
+                                <span class="star star--4 absolute top-[16px] left-[11px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
+                                <span class="star star--5 absolute top-[32px] left-[17px] w-[3px] h-[3px] opacity-0 translate-x-[3px]"></span>
+                                <span class="star star--6 absolute top-[36px] left-[28px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Hamburger Button -->
+                    <button id="menu-btn" class="relative w-10 h-10 flex items-center justify-center text-gray-900 dark:text-white hover-trigger focus:outline-none">
+                        <i id="icon-menu" class="fas fa-bars absolute text-xl transition-all duration-300 transform scale-100 rotate-0 opacity-100"></i>
+                        <i id="icon-close" class="fas fa-times absolute text-xl transition-all duration-300 transform scale-0 -rotate-45 opacity-0"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white dark:bg-black z-40 flex items-center justify-center md:hidden pointer-events-none">
+        
+        <!-- Back Button (Within Overlay) -->
+        <button id="mobile-back-btn" class="absolute top-6 right-6 text-gray-900 dark:text-white hover:text-atom-500 transition-colors z-50 p-2 pointer-events-auto">
+             <i class="fas fa-arrow-right text-3xl"></i>
+        </button>
+
+        <div class="flex flex-col gap-8 text-center pointer-events-auto">
+            <a href="#about" class="text-3xl font-display font-bold text-gray-900 dark:text-white hover:text-atom-500 transition-colors mobile-link">About</a>
+            <a href="#projects" class="text-3xl font-display font-bold text-gray-900 dark:text-white hover:text-fusion-500 transition-colors mobile-link">Research</a>
+            <a href="#experience" class="text-3xl font-display font-bold text-gray-900 dark:text-white hover:text-atom-500 transition-colors mobile-link">Experience</a>
+            <a href="#skills" class="text-3xl font-display font-bold text-gray-900 dark:text-white hover:text-fusion-500 transition-colors mobile-link">Elements</a>
+            <a href="#contact" class="text-3xl font-display font-bold text-gray-900 dark:text-white hover:text-atom-500 transition-colors mobile-link">Contact</a>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section id="about" class="min-h-screen flex items-center relative px-4 md:px-6 pt-20 overflow-hidden">
+        <div class="absolute top-1/4 -left-20 w-96 h-96 bg-atom-600/10 rounded-full blur-[100px] animate-blob"></div>
+        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-fusion-600/10 rounded-full blur-[100px] animate-blob" style="animation-delay: 2s"></div>
+
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10">
+            <div class="lg:col-span-7 space-y-6 md:space-y-8 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-atom-500/30 bg-atom-500/10 text-atom-600 dark:text-atom-400 text-xs font-mono tracking-widest uppercase mx-auto lg:mx-0">
+                    <span class="w-2 h-2 rounded-full bg-atom-500 animate-pulse"></span>
+                    System Online
+                </div>
+                <h1 class="text-4xl md:text-7xl lg:text-8xl font-display font-bold leading-tight text-gray-900 dark:text-white">
+                    The Creative <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 via-purple-500 to-fusion-500">Alchemist.</span>
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400 text-base md:text-xl max-w-xl leading-relaxed mx-auto lg:mx-0">
+                    I bridge the gap between <strong class="text-atom-600 dark:text-atom-400">Scientific Research</strong> and <strong class="text-fusion-600 dark:text-fusion-400">Creative Strategy</strong>. 
+                    Merging analytical precision with artistic intuition to deliver unique solutions.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
+                    <a href="#projects" class="px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black font-bold rounded-lg hover:opacity-90 transition-opacity hover-trigger shadow-lg shadow-atom-500/20">
+                        Explore Research
+                    </a>
+                    <a href="https://drive.google.com/file/d/1vTZ9ceCYhbn_840fG6Ji9Az7T7jSJHIt/view?usp=sharing" target="_blank" class="px-8 py-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors hover-trigger flex items-center justify-center gap-2">
+                        Download CV <i class="fas fa-download text-sm"></i>
+                    </a>
+                </div>
+                <div class="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200 dark:border-white/10">
+                    <div>
+                        <h4 class="text-2xl md:text-3xl font-display font-bold text-gray-900 dark:text-white">M.Sc.</h4>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">Chemistry</p>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl md:text-3xl font-display font-bold text-gray-900 dark:text-white">4+</h4>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">Years Exp.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl md:text-3xl font-display font-bold text-gray-900 dark:text-white">15+</h4>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">Projects</p>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-5 relative flex justify-center perspective-1000 mt-10 lg:mt-0">
+                <div class="relative w-72 h-72 md:w-96 md:h-96 animate-float">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-200/50 to-white/30 dark:from-white/10 dark:to-white/5 rounded-3xl border border-white/20 dark:border-white/10 backdrop-blur-md rotate-6 hover:rotate-0 transition-transform duration-700 shadow-2xl"></div>
+                    <div class="absolute inset-4 bg-white/60 dark:bg-black/40 rounded-2xl border border-white/20 dark:border-white/5 flex flex-col items-center justify-center p-8 text-center -rotate-6 hover:rotate-0 transition-transform duration-700 group hover-trigger">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-atom-500 to-fusion-500 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(14,165,233,0.5)] group-hover:scale-110 transition-transform">
+                            <i class="fas fa-flask text-3xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold font-display text-gray-900 dark:text-white mb-2">Sayan Mondal</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Laboratory & Design Interface</p>
+                        <div class="flex gap-3">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        </div>
+                    </div>
+                    <div class="absolute -top-6 -right-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded-xl shadow-xl animate-bounce delay-700">
+                        <i class="fas fa-atom text-atom-500 text-2xl"></i>
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded-xl shadow-xl animate-bounce">
+                        <i class="fas fa-pen-nib text-fusion-500 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESEARCH PROJECTS -->
+    <section id="projects" class="py-24 md:py-32 px-4 md:px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-20 text-center md:text-left">
+                <h2 class="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white mb-4">Research <span class="text-atom-500">Log</span></h2>
+                <div class="h-1 w-20 bg-atom-500 mx-auto md:mx-0"></div>
+            </div>
+            <div class="space-y-24">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 group">
+                    <div class="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 hover-trigger shadow-xl">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-atom-500/10 to-transparent z-10"></div>
+                        <div class="h-64 md:h-[400px] lg:h-[500px] flex items-center justify-center bg-gray-50 dark:bg-black/40 relative">
+                            <div class="relative w-32 h-32 md:w-48 md:h-48 border-2 border-atom-500/30 rounded-full flex items-center justify-center">
+                                <div class="w-24 h-24 md:w-32 md:h-32 border border-atom-500/50 rounded-full animate-spin-slow"></div>
+                                <div class="w-2 h-2 bg-atom-400 rounded-full absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1"></div>
+                                <i class="fas fa-microscope text-4xl md:text-6xl text-atom-500 opacity-80"></i>
+                            </div>
+                            <div class="absolute bottom-4 left-4 z-20 font-mono text-xs text-atom-600 dark:text-atom-300 bg-white/80 dark:bg-black/60 px-2 py-1 rounded border border-atom-200 dark:border-atom-900 backdrop-blur-sm">
+                                FIG 1.0: NANODOTS
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <div class="flex items-center gap-4 mb-6">
+                            <span class="text-atom-600 dark:text-atom-400 font-mono text-sm">M.Sc. THESIS</span>
+                            <span class="h-px flex-1 bg-gray-300 dark:bg-white/10"></span>
+                            <span class="text-gray-500 font-mono text-sm">2024-2025</span>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-bold font-display text-gray-900 dark:text-white mb-6 group-hover:text-atom-500 transition-colors">Carbon Nanodots Analysis</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-8">
+                            Investigation into the synthesis and reactivity of carbon nanodots within varying solvent pH environments. The study aimed to optimize these nanoparticles for enhanced bio-imaging and targeted drug delivery systems.
+                        </p>
+                        <div class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-6 mb-8">
+                            <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Methodology</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">UV-Vis Spectroscopy</span>
+                                <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">OriginPro Analysis</span>
+                                <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">pH Titration</span>
+                            </div>
+                        </div>
+                        <a href="#" class="inline-flex items-center gap-2 text-gray-900 dark:text-white font-bold hover:text-atom-500 transition-colors hover-trigger w-max">
+                            Read Full Report <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 group">
+                    <div class="order-1 lg:order-2 relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 hover-trigger shadow-xl">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-fusion-500/10 to-transparent z-10"></div>
+                        <div class="h-64 md:h-[400px] lg:h-[500px] flex items-center justify-center bg-gray-50 dark:bg-black/40 relative">
+                             <div class="relative w-32 h-32 md:w-48 md:h-48 border-2 border-fusion-500/30 rounded-full flex items-center justify-center">
+                                <div class="absolute w-full h-px bg-fusion-500/50 rotate-45"></div>
+                                <div class="absolute w-full h-px bg-fusion-500/50 -rotate-45"></div>
+                                <i class="fas fa-dna text-4xl md:text-6xl text-fusion-500 opacity-80 z-20"></i>
+                            </div>
+                            <div class="absolute bottom-4 right-4 z-20 font-mono text-xs text-fusion-600 dark:text-fusion-300 bg-white/80 dark:bg-black/60 px-2 py-1 rounded border border-fusion-200 dark:border-fusion-900 backdrop-blur-sm">
+                                FIG 2.0: ONCOLOGY
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-2 lg:order-1 flex flex-col justify-center">
+                        <div class="flex items-center gap-4 mb-6">
+                            <span class="text-fusion-600 dark:text-fusion-400 font-mono text-sm">B.Sc. PROJECT</span>
+                            <span class="h-px flex-1 bg-gray-300 dark:bg-white/10"></span>
+                            <span class="text-gray-500 font-mono text-sm">2020-2023</span>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-bold font-display text-gray-900 dark:text-white mb-6 group-hover:text-fusion-500 transition-colors">Nanoparticles in Oncology</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-8">
+                            A comprehensive review and experimental study on utilizing functionalized nanoparticles as messengers for early-stage cancer detection. Utilized NMR spectroscopy to characterize surface modifications.
+                        </p>
+                        <div class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-6 mb-8">
+                            <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Methodology</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-fusion-100 dark:bg-fusion-500/10 text-fusion-700 dark:text-fusion-400 border border-fusion-200 dark:border-fusion-500/20 rounded text-xs font-mono">NMR Spectroscopy</span>
+                                <span class="px-3 py-1 bg-fusion-100 dark:bg-fusion-500/10 text-fusion-700 dark:text-fusion-400 border border-fusion-200 dark:border-fusion-500/20 rounded text-xs font-mono">Literature Review</span>
+                                <span class="px-3 py-1 bg-fusion-100 dark:bg-fusion-500/10 text-fusion-700 dark:text-fusion-400 border border-fusion-200 dark:border-fusion-500/20 rounded text-xs font-mono">Data Synthesis</span>
+                            </div>
+                        </div>
+                        <a href="#" class="inline-flex items-center gap-2 text-gray-900 dark:text-white font-bold hover:text-fusion-500 transition-colors hover-trigger w-max">
+                            View Documentation <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="py-24 md:py-32 px-4 md:px-6 bg-gray-100 dark:bg-black/50 relative">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white mb-16 text-center">Leadership <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 to-fusion-500">Timeline</span></h2>
+            <div class="relative">
+                <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 timeline-line md:-translate-x-1/2"></div>
+                <div class="relative z-10 mb-16 md:mb-20 md:w-1/2 md:ml-auto md:pl-12 pl-12 group hover-trigger">
+                    <div class="absolute left-1.5 md:-left-3 top-0 w-6 h-6 bg-gray-100 dark:bg-black border-4 border-atom-500 rounded-full group-hover:scale-125 transition-transform duration-300 shadow-[0_0_15px_#0ea5e9]"></div>
+                    <div class="glass-card p-6 md:p-8 rounded-xl relative shadow-lg">
+                        <span class="text-atom-600 dark:text-atom-400 font-mono text-sm mb-2 block">Dec 2023 - Aug 2025</span>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Secretary of Creative & Magazine</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">University of Kalyani</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400 text-sm marker:text-atom-500">
+                            <li>Orchestrated 15-member creative team for departmental events.</li>
+                            <li>Editor-in-chief for annual magazine (500+ digital circulation).</li>
+                            <li>Managed logistical budgets and technical reporting.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="relative z-10 mb-16 md:mb-20 md:w-1/2 md:mr-auto md:pr-12 pl-12 md:pl-0 md:text-right group hover-trigger">
+                    <div class="absolute left-1.5 md:left-auto md:-right-3 top-0 w-6 h-6 bg-gray-100 dark:bg-black border-4 border-fusion-500 rounded-full group-hover:scale-125 transition-transform duration-300 shadow-[0_0_15px_#d946ef]"></div>
+                    <div class="glass-card p-6 md:p-8 rounded-xl relative shadow-lg">
+                        <span class="text-fusion-600 dark:text-fusion-400 font-mono text-sm mb-2 block">Sep 2020 - Aug 2023</span>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">General Secretary</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">Santipur College</p>
+                        <ul class="list-disc list-inside md:list-outside space-y-2 text-gray-600 dark:text-gray-400 text-sm marker:text-fusion-500 inline-block text-left md:text-right">
+                            <li>Led a 30-person student council.</li>
+                            <li>Directed creative vision for large-scale Freshers' Welcome.</li>
+                            <li>Implemented digital inventory tracking for event procurement.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="relative z-10 md:w-1/2 md:ml-auto md:pl-12 pl-12 group hover-trigger">
+                    <div class="absolute left-1.5 md:-left-3 top-0 w-6 h-6 bg-gray-100 dark:bg-black border-4 border-green-500 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                    <div class="glass-card p-6 md:p-8 rounded-xl relative shadow-lg">
+                        <span class="text-green-600 dark:text-green-400 font-mono text-sm mb-2 block">June 2025</span>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">AI Implementation</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">Google Workspace Certification</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">
+                            Completed advanced training on integrating Artificial Intelligence tools into professional workflow and data management.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="py-24 md:py-32 px-4 md:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white mb-4">Elemental <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 to-fusion-500">Stack</span></h2>
+                    <p class="text-gray-600 dark:text-gray-400 max-w-md">My technical arsenal arranged by atomic weight and category.</p>
+                </div>
+                <div class="flex flex-wrap gap-4 text-sm font-mono">
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 bg-atom-500/20 border border-atom-500"></span> Chemistry</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 bg-fusion-500/20 border border-fusion-500"></span> Creative</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 bg-green-500/20 border border-green-500"></span> Tools</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
+                    <span class="element-number text-atom-600 dark:text-atom-400">01</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Or</span>
+                    <span class="element-name text-atom-500 dark:text-atom-300">OriginPro</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
+                    <span class="element-number text-atom-600 dark:text-atom-400">02</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Cd</span>
+                    <span class="element-name text-atom-500 dark:text-atom-300">Chemdraw</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
+                    <span class="element-number text-atom-600 dark:text-atom-400">03</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Gv</span>
+                    <span class="element-name text-atom-500 dark:text-atom-300">Gauss View</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
+                    <span class="element-number text-atom-600 dark:text-atom-400">04</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Nm</span>
+                    <span class="element-name text-atom-500 dark:text-atom-300">NMR Spec</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
+                    <span class="element-number text-atom-600 dark:text-atom-400">05</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Uv</span>
+                    <span class="element-name text-atom-500 dark:text-atom-300">UV-Vis</span>
+                </div>
+                <div class="hidden lg:block"></div>
+                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
+                    <span class="element-number text-fusion-600 dark:text-fusion-400">06</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Ps</span>
+                    <span class="element-name text-fusion-500 dark:text-fusion-300">Photoshop</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
+                    <span class="element-number text-fusion-600 dark:text-fusion-400">07</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Ai</span>
+                    <span class="element-name text-fusion-500 dark:text-fusion-300">Illustrator</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
+                    <span class="element-number text-fusion-600 dark:text-fusion-400">08</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Fi</span>
+                    <span class="element-name text-fusion-500 dark:text-fusion-300">Figma</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
+                    <span class="element-number text-fusion-600 dark:text-fusion-400">09</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Bl</span>
+                    <span class="element-name text-fusion-500 dark:text-fusion-300">Blender</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
+                    <span class="element-number text-fusion-600 dark:text-fusion-400">10</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Da</span>
+                    <span class="element-name text-fusion-500 dark:text-fusion-300">DaVinci</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 34, 197, 94;">
+                    <span class="element-number text-green-600 dark:text-green-400">11</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Xl</span>
+                    <span class="element-name text-green-600 dark:text-green-300">Excel</span>
+                </div>
+                <div class="element-card hover-trigger" style="--glow-color: 34, 197, 94;">
+                    <span class="element-number text-green-600 dark:text-green-400">12</span>
+                    <span class="element-symbol text-gray-900 dark:text-white">Bi</span>
+                    <span class="element-name text-green-600 dark:text-green-300">PowerBI</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="py-24 md:py-32 px-4 md:px-6 relative overflow-hidden bg-slate-900 dark:bg-black">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto relative z-10 text-center">
+            <h2 class="text-4xl md:text-6xl font-display font-bold text-white mb-8">Start a <span class="text-atom-500">Reaction</span></h2>
+            <p class="text-gray-400 mb-12 text-lg">
+                Available for collaborative research, creative direction, or data analysis roles. Let's create something volatile.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+                <a href="mailto:sayanmondal.co@gmail.com" class="glass-panel p-6 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group hover-trigger border border-white/10 shadow-lg">
+                    <i class="fas fa-envelope text-3xl text-atom-400 mb-4 group-hover:scale-110 transition-transform block"></i>
+                    <span class="text-white font-mono text-sm">sayanmondal.co@gmail.com</span>
+                </a>
+                <a href="tel:+919883635078" class="glass-panel p-6 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group hover-trigger border border-white/10 shadow-lg">
+                    <i class="fas fa-phone text-3xl text-fusion-400 mb-4 group-hover:scale-110 transition-transform block"></i>
+                    <span class="text-white font-mono text-sm">+91 9883635078</span>
+                </a>
+            </div>
+            <div class="flex justify-center gap-10">
+                <a href="https://www.linkedin.com/in/sayan-mondal-32054735a/" target="_blank" class="relative group hover-trigger">
+                    <i class="fab fa-linkedin text-4xl text-gray-400 hover:text-blue-400 transition-all duration-300 transform group-hover:-translate-y-2"></i>
+                    <span class="tooltip-arrow absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 whitespace-nowrap shadow-xl">
+                        LinkedIn
+                    </span>
+                </a>
+                <a href="https://github.com/AstroDev3D" target="_blank" class="relative group hover-trigger">
+                    <i class="fab fa-github text-4xl text-gray-400 hover:text-white transition-all duration-300 transform group-hover:-translate-y-2"></i>
+                    <span class="tooltip-arrow absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 whitespace-nowrap shadow-xl">
+                        GitHub
+                    </span>
+                </a>
+                <a href="https://www.instagram.com/sayan_mondal.20_/" target="_blank" class="relative group hover-trigger">
+                    <i class="fab fa-instagram text-4xl text-gray-400 hover:text-pink-500 transition-all duration-300 transform group-hover:-translate-y-2"></i>
+                    <span class="tooltip-arrow absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 whitespace-nowrap shadow-xl">
+                        Instagram
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-8 border-t border-gray-200 dark:border-white/5 text-center text-gray-500 dark:text-gray-600 text-xs font-mono">
+        <p>&copy; 2025 Sayan Mondal. Designed with Science & Art.</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // --- 1. Custom Cursor with Magnetic Effect ---
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+        const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+        const moveCursor = (e) => {
+            const { clientX: x, clientY: y } = e;
+            cursorDot.style.left = x + 'px';
+            cursorDot.style.top = y + 'px';
+            cursor.animate({ left: x + 'px', top: y + 'px' }, { duration: 500, fill: "forwards" });
+        }
+
+        window.addEventListener('mousemove', moveCursor);
+
+        hoverTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
+            trigger.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
+        });
+
+        // --- 2. Optimized Particle Background ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+                this.colorDark = Math.random() > 0.5 ? 'rgba(14, 165, 233, 0.3)' : 'rgba(217, 70, 239, 0.3)';
+                this.colorLight = Math.random() > 0.5 ? 'rgba(14, 165, 233, 0.6)' : 'rgba(217, 70, 239, 0.6)';
+            }
+            draw() {
+                const isDark = document.documentElement.classList.contains('dark');
+                ctx.fillStyle = isDark ? this.colorDark : this.colorLight;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let maxDistance = mouse.radius;
+                
+                if (distance < mouse.radius) {
+                    let forceDirectionX = dx / distance;
+                    let forceDirectionY = dy / distance;
+                    let force = (maxDistance - distance) / maxDistance;
+                    let directionX = forceDirectionX * force * this.density;
+                    let directionY = forceDirectionY * force * this.density;
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.baseX) {
+                        let dx = this.x - this.baseX;
+                        this.x -= dx / 20; // Slower return
+                    }
+                    if (this.y !== this.baseY) {
+                        let dy = this.y - this.baseY;
+                        this.y -= dy / 20; // Slower return
+                    }
+                }
+            }
+        }
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            // Optimization: Much fewer particles on mobile (divisor 15000 vs 9000)
+            let divider = window.innerWidth < 768 ? 15000 : 9000;
+            let numberOfParticles = (canvas.width * canvas.height) / divider;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].draw();
+                particles[i].update();
+                
+                // Draw connections
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (distance < 100) {
+                        const isDark = document.documentElement.classList.contains('dark');
+                        ctx.beginPath();
+                        ctx.strokeStyle = isDark 
+                            ? `rgba(150, 150, 150, ${0.1 - distance/1000})`
+                            : `rgba(100, 100, 100, ${0.15 - distance/1000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        animateCanvas();
+
+        // --- 3. Scroll Progress ---
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scroll-progress').style.width = scrolled + "%";
+        });
+
+        // --- 4. Mobile Menu & Back Button ---
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        const iconMenu = document.getElementById('icon-menu');
+        const iconClose = document.getElementById('icon-close');
+        const mobileBackBtn = document.getElementById('mobile-back-btn');
+        let isMenuOpen = false;
+
+        const toggleMenu = () => {
+            isMenuOpen = !isMenuOpen;
+            const rect = menuBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            if(isMenuOpen) {
+                mobileMenu.style.clipPath = `circle(150% at ${centerX}px ${centerY}px)`;
+                mobileMenu.style.pointerEvents = 'auto';
+                iconMenu.classList.replace('opacity-100', 'opacity-0');
+                iconMenu.classList.replace('scale-100', 'scale-0');
+                iconClose.classList.replace('opacity-0', 'opacity-100');
+                iconClose.classList.replace('scale-0', 'scale-100');
+                document.body.style.overflow = 'hidden';
+            } else {
+                mobileMenu.style.clipPath = `circle(0px at ${centerX}px ${centerY}px)`;
+                mobileMenu.style.pointerEvents = 'none';
+                iconMenu.classList.replace('opacity-0', 'opacity-100');
+                iconMenu.classList.replace('scale-0', 'scale-100');
+                iconClose.classList.replace('opacity-100', 'opacity-0');
+                iconClose.classList.replace('scale-100', 'scale-0');
+                document.body.style.overflow = '';
+            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+        if(mobileBackBtn) mobileBackBtn.addEventListener('click', toggleMenu);
+
+        // --- 5. Theme Toggle (Forced Default Dark) ---
+        const themeInputs = document.querySelectorAll('.theme-checkbox');
+        const html = document.documentElement;
+
+        function initTheme() {
+            // Priority: LocalStorage -> Default to DARK (ignore system pref if not set, treat null as dark)
+            const storedTheme = localStorage.getItem('theme');
+            const isDark = storedTheme === 'dark' || storedTheme === null; 
+            
+            if (isDark) {
+                html.classList.add('dark');
+                themeInputs.forEach(input => input.checked = true);
+            } else {
+                html.classList.remove('dark');
+                themeInputs.forEach(input => input.checked = false);
+            }
+        }
+        initTheme();
+
+        function toggleTheme(event) {
+            if (!document.startViewTransition) {
+                const isChecked = event.target.checked;
+                if (isChecked) {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                } else {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                }
+                themeInputs.forEach(input => input.checked = isChecked);
+                return;
+            }
+
+            const x = event.clientX || window.innerWidth / 2;
+            const y = event.clientY || window.innerHeight / 2;
+            const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+            const isChecked = event.target.checked;
+
+            const transition = document.startViewTransition(() => {
+                if (isChecked) {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                } else {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                }
+                themeInputs.forEach(input => input.checked = isChecked);
+            });
+
+            transition.ready.then(() => {
+                document.documentElement.animate(
+                    { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`] },
+                    { duration: 400, easing: 'ease-in-out', pseudoElement: '::view-transition-new(root)' }
+                );
+            });
+        }
+
+        themeInputs.forEach(input => input.addEventListener('change', toggleTheme));
+
+    </script>
+</body>
+</html>
