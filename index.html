@@ -54,9 +54,10 @@
                         }
                     },
                     animation: {
-                        'blob': 'blob 15s infinite', /* Slower, lighter animation */
-                        'float': 'float 8s ease-in-out infinite', /* Slower float */
+                        'blob': 'blob 15s infinite',
+                        'float': 'float 8s ease-in-out infinite',
                         'spin-slow': 'spin 15s linear infinite',
+                        'cursor': 'cursor .75s step-end infinite',
                     },
                     keyframes: {
                         blob: {
@@ -68,6 +69,10 @@
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-15px)' },
+                        },
+                        cursor: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
                         }
                     }
                 }
@@ -100,18 +105,16 @@
             #cursor, #cursor-dot { display: none !important; }
         }
 
-        /* Reduced Blur for Mobile Performance */
         @media (max-width: 768px) {
             .glass-panel, .glass-card {
                 backdrop-filter: blur(8px) !important;
                 -webkit-backdrop-filter: blur(8px) !important;
             }
             .noise-overlay {
-                opacity: 0.2; /* Lighter noise on mobile */
+                opacity: 0.2;
             }
         }
 
-        /* Noise Overlay */
         .noise-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -169,7 +172,7 @@
             border-color: #0ea5e9;
         }
 
-        /* Glassmorphism Classes */
+        /* Glassmorphism */
         .glass-panel {
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
@@ -211,35 +214,12 @@
             background: rgba(255, 255, 255, 0.9);
         }
 
-        /* Periodic Table Style */
-        .element-card {
-            aspect-ratio: 1/1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 0.75rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        /* Typewriter Cursor */
+        .type-cursor::after {
+            content: "|";
+            animation: cursor 0.75s step-end infinite;
+            color: #0ea5e9;
         }
-        .dark .element-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .element-card {
-            background: rgba(255,255,255,0.6);
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-        .element-card:hover {
-            transform: scale(1.05);
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(var(--glow-color), 0.3);
-            border-color: rgba(var(--glow-color), 0.8);
-        }
-        .element-number { font-size: 0.7rem; opacity: 0.7; }
-        .element-symbol { font-size: 1.8rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
-        .element-name { font-size: 0.65rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.05em; }
 
         /* Scroll Progress */
         .scroll-progress {
@@ -249,92 +229,120 @@
             transition: width 0.1s;
         }
         ::selection { background: #0ea5e9; color: white; }
-        .timeline-line { background: linear-gradient(to bottom, #0ea5e9, #d946ef, transparent); }
+        
+        /* Timeline Animations */
+        .timeline-line-container {
+            position: absolute;
+            left: 4px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+        @media(min-width: 768px) {
+            .timeline-line-container { left: 50%; transform: translateX(-50%); }
+        }
+        .timeline-line-fill {
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to bottom, #0ea5e9, #d946ef);
+            transition: height 0.5s ease-out;
+        }
+        
+        .timeline-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-        /* Mobile Menu Animation */
+        /* Mobile Menu */
         #mobile-menu {
             clip-path: circle(0px at 100% 0px);
             transition: clip-path 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        
-        /* Tooltip Arrow */
         .tooltip-arrow::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
+            content: ''; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent;
         }
-        .dark .tooltip-arrow::after {
-            border-color: white transparent transparent transparent;
+        .dark .tooltip-arrow::after { border-color: white transparent transparent transparent; }
+
+        /* === New Modern Theme Toggle CSS === */
+        .modern-toggle-track {
+            width: 52px;
+            height: 28px;
+            background-color: #e2e8f0; /* slate-200 */
+            border-radius: 9999px;
+            position: relative;
+            transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Faster 0.3s */
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+        .theme-checkbox:checked + label .modern-toggle-track {
+            background-color: #1e293b; /* slate-800 */
         }
 
-        /* === Theme Toggle Button CSS === */
-        .toggle {
-            background-color: #83d8ff;
-            transition: background-color 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
-        }
-        .toggle__handler {
-            background-color: #ffcf96;
-            transition: all 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            transform: rotate(-45deg);
-        }
-        .crater {
-            background-color: #e8cda5;
-            opacity: 0;
-            transition: opacity 200ms ease-in-out;
-        }
-        .star {
-            background-color: #fff;
-            transition: all 300ms cubic-bezier(0.445,0.05,0.55,0.95);
+        .modern-toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background-color: white;
             border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1); /* Faster 0.3s */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        /* Checked state (Dark Mode) */
-        .theme-checkbox:checked + label.toggle { background-color: #749dd6; }
-        .theme-checkbox:checked + label.toggle .toggle__handler {
-            background-color: #ffe5b5;
-            transform: translateX(40px) rotate(0deg);
+        .theme-checkbox:checked + label .modern-toggle-thumb {
+            transform: translateX(24px);
         }
-        .theme-checkbox:checked + label.toggle .crater { opacity: 1; }
-        .theme-checkbox:checked + label.toggle .star--1 { width: 2px; height: 2px; }
-        .theme-checkbox:checked + label.toggle .star--2 { width: 4px; height: 4px; transform: translateX(-5px); }
-        .theme-checkbox:checked + label.toggle .star--3 { width: 2px; height: 2px; transform: translateX(-7px); }
-        .theme-checkbox:checked + label.toggle .star--4,
-        .theme-checkbox:checked + label.toggle .star--5,
-        .theme-checkbox:checked + label.toggle .star--6 { opacity: 1; transform: translateX(0); }
-        .theme-checkbox:checked + label.toggle .star--4 { transition-delay: 200ms; }
-        .theme-checkbox:checked + label.toggle .star--5 { transition-delay: 300ms; }
-        .theme-checkbox:checked + label.toggle .star--6 { transition-delay: 400ms; }
+
+        .toggle-icon {
+            font-size: 10px;
+            position: absolute;
+            transition: all 0.3s ease; /* Faster 0.3s */
+        }
+        .icon-sun {
+            color: #f59e0b;
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+        .icon-moon {
+            color: #334155;
+            opacity: 0;
+            transform: scale(0) rotate(-90deg);
+        }
+
+        .theme-checkbox:checked + label .icon-sun {
+            opacity: 0;
+            transform: scale(0) rotate(90deg);
+        }
+        .theme-checkbox:checked + label .icon-moon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
     </style>
 </head>
 <body class="font-sans antialiased selection:bg-atom-500 selection:text-white bg-light-bg dark:bg-dark-bg text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
-    <!-- Noise Texture Overlay -->
+    <!-- Noise Texture -->
     <div class="noise-overlay"></div>
-
-    <!-- Scroll Progress -->
     <div class="scroll-progress" id="scroll-progress"></div>
-
-    <!-- Custom Cursor -->
     <div id="cursor" class="hidden md:block"></div>
     <div id="cursor-dot" class="hidden md:block"></div>
-
-    <!-- Background Canvas -->
     <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 opacity-40"></canvas>
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 w-full z-40 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 md:px-6 py-4">
             <div class="glass-panel rounded-full px-4 md:px-6 py-3 flex justify-between items-center shadow-lg">
-                <!-- Logo -->
                 <a href="#" class="text-lg md:text-xl font-display font-bold tracking-tighter hover-trigger text-gray-900 dark:text-white z-50 relative">
                     SAYAN<span class="text-atom-500">.</span><span class="text-fusion-500">MONDAL</span>
                 </a>
 
-                <!-- Desktop Links -->
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-400">
                     <a href="#about" class="hover:text-atom-600 dark:hover:text-white transition-colors hover-trigger">About</a>
                     <a href="#projects" class="hover:text-atom-600 dark:hover:text-white transition-colors hover-trigger">Research</a>
@@ -346,50 +354,31 @@
                         <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
                     </a>
 
-                    <!-- Theme Toggle (Desktop) -->
-                    <div class="relative w-[50px] h-[28px] flex items-center justify-center">
-                        <div class="transform scale-[0.55] origin-center">
-                            <input type="checkbox" id="theme-toggle-desktop" class="theme-checkbox hidden peer" />
-                            <label for="theme-toggle-desktop" class="toggle relative w-[90px] h-[50px] rounded-full cursor-pointer inline-block shadow-lg">
-                                <span class="toggle__handler absolute top-[3px] left-[3px] w-[44px] h-[44px] rounded-full shadow-md z-[2]">
-                                    <span class="crater crater--1 absolute top-[18px] left-[10px] w-[4px] h-[4px] rounded-full"></span>
-                                    <span class="crater crater--2 absolute top-[28px] left-[22px] w-[6px] h-[6px] rounded-full"></span>
-                                    <span class="crater crater--3 absolute top-[10px] left-[25px] w-[8px] h-[8px] rounded-full"></span>
-                                </span>
-                                <span class="star star--1 absolute top-[10px] left-[35px] w-[30px] h-[3px]"></span>
-                                <span class="star star--2 absolute top-[18px] left-[28px] w-[30px] h-[3px]"></span>
-                                <span class="star star--3 absolute top-[27px] left-[40px] w-[30px] h-[3px]"></span>
-                                <span class="star star--4 absolute top-[16px] left-[11px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
-                                <span class="star star--5 absolute top-[32px] left-[17px] w-[3px] h-[3px] opacity-0 translate-x-[3px]"></span>
-                                <span class="star star--6 absolute top-[36px] left-[28px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
-                            </label>
-                        </div>
+                    <!-- Desktop Toggle -->
+                    <div class="relative flex items-center justify-center">
+                        <input type="checkbox" id="theme-toggle-desktop" class="theme-checkbox hidden peer" />
+                        <label for="theme-toggle-desktop" class="cursor-pointer relative">
+                            <div class="modern-toggle-track"></div>
+                            <div class="modern-toggle-thumb">
+                                <i class="fas fa-sun toggle-icon icon-sun"></i>
+                                <i class="fas fa-moon toggle-icon icon-moon"></i>
+                            </div>
+                        </label>
                     </div>
                 </div>
 
-                <!-- Mobile Actions (Theme + Menu) -->
+                <!-- Mobile Actions -->
                 <div class="md:hidden flex items-center gap-4 z-50">
-                    <!-- Theme Toggle (Mobile) -->
-                    <div class="relative w-[50px] h-[28px] flex items-center justify-center">
-                        <div class="transform scale-[0.55] origin-center">
-                            <input type="checkbox" id="theme-toggle-mobile" class="theme-checkbox hidden peer" />
-                            <label for="theme-toggle-mobile" class="toggle relative w-[90px] h-[50px] rounded-full cursor-pointer inline-block shadow-lg">
-                                <span class="toggle__handler absolute top-[3px] left-[3px] w-[44px] h-[44px] rounded-full shadow-md z-[2]">
-                                    <span class="crater crater--1 absolute top-[18px] left-[10px] w-[4px] h-[4px] rounded-full"></span>
-                                    <span class="crater crater--2 absolute top-[28px] left-[22px] w-[6px] h-[6px] rounded-full"></span>
-                                    <span class="crater crater--3 absolute top-[10px] left-[25px] w-[8px] h-[8px] rounded-full"></span>
-                                </span>
-                                <span class="star star--1 absolute top-[10px] left-[35px] w-[30px] h-[3px]"></span>
-                                <span class="star star--2 absolute top-[18px] left-[28px] w-[30px] h-[3px]"></span>
-                                <span class="star star--3 absolute top-[27px] left-[40px] w-[30px] h-[3px]"></span>
-                                <span class="star star--4 absolute top-[16px] left-[11px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
-                                <span class="star star--5 absolute top-[32px] left-[17px] w-[3px] h-[3px] opacity-0 translate-x-[3px]"></span>
-                                <span class="star star--6 absolute top-[36px] left-[28px] w-[2px] h-[2px] opacity-0 translate-x-[3px]"></span>
-                            </label>
-                        </div>
+                    <div class="relative flex items-center justify-center">
+                        <input type="checkbox" id="theme-toggle-mobile" class="theme-checkbox hidden peer" />
+                        <label for="theme-toggle-mobile" class="cursor-pointer relative">
+                            <div class="modern-toggle-track"></div>
+                            <div class="modern-toggle-thumb">
+                                <i class="fas fa-sun toggle-icon icon-sun"></i>
+                                <i class="fas fa-moon toggle-icon icon-moon"></i>
+                            </div>
+                        </label>
                     </div>
-
-                    <!-- Hamburger Button -->
                     <button id="menu-btn" class="relative w-10 h-10 flex items-center justify-center text-gray-900 dark:text-white hover-trigger focus:outline-none">
                         <i id="icon-menu" class="fas fa-bars absolute text-xl transition-all duration-300 transform scale-100 rotate-0 opacity-100"></i>
                         <i id="icon-close" class="fas fa-times absolute text-xl transition-all duration-300 transform scale-0 -rotate-45 opacity-0"></i>
@@ -401,12 +390,9 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 bg-white dark:bg-black z-40 flex items-center justify-center md:hidden pointer-events-none">
-        
-        <!-- Back Button (Within Overlay) -->
         <button id="mobile-back-btn" class="absolute top-6 right-6 text-gray-900 dark:text-white hover:text-atom-500 transition-colors z-50 p-2 pointer-events-auto">
              <i class="fas fa-arrow-right text-3xl"></i>
         </button>
-
         <div class="flex flex-col gap-8 text-center pointer-events-auto">
             <a href="#about" class="text-3xl font-display font-bold text-gray-900 dark:text-white hover:text-atom-500 transition-colors mobile-link">About</a>
             <a href="#projects" class="text-3xl font-display font-bold text-gray-900 dark:text-white hover:text-fusion-500 transition-colors mobile-link">Research</a>
@@ -429,17 +415,32 @@
                 </div>
                 <h1 class="text-4xl md:text-7xl lg:text-8xl font-display font-bold leading-tight text-gray-900 dark:text-white">
                     The Creative <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 via-purple-500 to-fusion-500">Alchemist.</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 via-purple-500 to-fusion-500 type-cursor" id="hero-typewriter">Alchemist</span>
                 </h1>
-                <p class="text-gray-600 dark:text-gray-400 text-base md:text-xl max-w-xl leading-relaxed mx-auto lg:mx-0">
-                    I bridge the gap between <strong class="text-atom-600 dark:text-atom-400">Scientific Research</strong> and <strong class="text-fusion-600 dark:text-fusion-400">Creative Strategy</strong>. 
-                    Merging analytical precision with artistic intuition to deliver unique solutions.
+                <p id="about-text" class="text-gray-600 dark:text-gray-400 text-base md:text-xl max-w-xl leading-relaxed mx-auto lg:mx-0 min-h-[100px]">
+                    <!-- Text inserted via JS for Typewriter effect -->
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
-                    <a href="#projects" class="px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black font-bold rounded-lg hover:opacity-90 transition-opacity hover-trigger shadow-lg shadow-atom-500/20">
-                        Explore Research
+                <div class="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-center">
+                    
+                    <!-- Redesigned Explore Button -->
+                    <a
+                      href="#projects"
+                      class="flex justify-center gap-2 items-center shadow-xl text-lg bg-gray-50 backdrop-blur-md lg:font-semibold isolation-auto border-gray-50 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-emerald-500 text-gray-800 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative z-10 px-4 py-2 overflow-hidden border-2 rounded-full group"
+                    >
+                      Explore Research
+                      <svg
+                        class="w-8 h-8 justify-end group-hover:rotate-90 group-hover:bg-gray-50 text-gray-50 ease-linear duration-300 rounded-full border border-gray-700 group-hover:border-none p-2 rotate-45"
+                        viewBox="0 0 16 19"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"
+                          class="fill-gray-800 group-hover:fill-gray-800"
+                        ></path>
+                      </svg>
                     </a>
-                    <a href="https://drive.google.com/file/d/1vTZ9ceCYhbn_840fG6Ji9Az7T7jSJHIt/view?usp=sharing" target="_blank" class="px-8 py-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors hover-trigger flex items-center justify-center gap-2">
+
+                    <a href="https://drive.google.com/file/d/1vTZ9ceCYhbn_840fG6Ji9Az7T7jSJHIt/view?usp=sharing" target="_blank" class="px-8 py-2.5 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors hover:scale-105 hover:shadow-lg active:scale-95 duration-300 hover-trigger flex items-center justify-center gap-2 h-full">
                         Download CV <i class="fas fa-download text-sm"></i>
                     </a>
                 </div>
@@ -492,6 +493,7 @@
                 <div class="h-1 w-20 bg-atom-500 mx-auto md:mx-0"></div>
             </div>
             <div class="space-y-24">
+                <!-- Project 1 -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 group">
                     <div class="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 hover-trigger shadow-xl">
                         <div class="absolute inset-0 bg-gradient-to-tr from-atom-500/10 to-transparent z-10"></div>
@@ -522,6 +524,9 @@
                                 <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">UV-Vis Spectroscopy</span>
                                 <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">OriginPro Analysis</span>
                                 <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">pH Titration</span>
+                                <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">IR Spectroscopy</span>
+                                <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">Chemdraw</span>
+                                <span class="px-3 py-1 bg-atom-100 dark:bg-atom-500/10 text-atom-700 dark:text-atom-400 border border-atom-200 dark:border-atom-500/20 rounded text-xs font-mono">Photoshop</span>
                             </div>
                         </div>
                         <a href="#" class="inline-flex items-center gap-2 text-gray-900 dark:text-white font-bold hover:text-atom-500 transition-colors hover-trigger w-max">
@@ -529,6 +534,7 @@
                         </a>
                     </div>
                 </div>
+                <!-- Project 2 -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 group">
                     <div class="order-1 lg:order-2 relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 hover-trigger shadow-xl">
                         <div class="absolute inset-0 bg-gradient-to-tr from-fusion-500/10 to-transparent z-10"></div>
@@ -570,13 +576,19 @@
         </div>
     </section>
 
-    <!-- EXPERIENCE -->
+    <!-- EXPERIENCE (ACADEMIC LEADERSHIP) -->
     <section id="experience" class="py-24 md:py-32 px-4 md:px-6 bg-gray-100 dark:bg-black/50 relative">
         <div class="max-w-4xl mx-auto">
-            <h2 class="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white mb-16 text-center">Leadership <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 to-fusion-500">Timeline</span></h2>
-            <div class="relative">
-                <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 timeline-line md:-translate-x-1/2"></div>
-                <div class="relative z-10 mb-16 md:mb-20 md:w-1/2 md:ml-auto md:pl-12 pl-12 group hover-trigger">
+            <h2 class="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white mb-16 text-center">Academic <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 to-fusion-500">Leadership</span></h2>
+            
+            <div class="relative timeline-container">
+                <!-- Vertical Line (Grows on Scroll) -->
+                <div class="timeline-line-container">
+                    <div class="timeline-line-fill" id="timeline-line"></div>
+                </div>
+
+                <!-- Item 1 -->
+                <div class="relative z-10 mb-16 md:mb-20 md:w-1/2 md:ml-auto md:pl-12 pl-12 group hover-trigger timeline-item">
                     <div class="absolute left-1.5 md:-left-3 top-0 w-6 h-6 bg-gray-100 dark:bg-black border-4 border-atom-500 rounded-full group-hover:scale-125 transition-transform duration-300 shadow-[0_0_15px_#0ea5e9]"></div>
                     <div class="glass-card p-6 md:p-8 rounded-xl relative shadow-lg">
                         <span class="text-atom-600 dark:text-atom-400 font-mono text-sm mb-2 block">Dec 2023 - Aug 2025</span>
@@ -589,7 +601,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="relative z-10 mb-16 md:mb-20 md:w-1/2 md:mr-auto md:pr-12 pl-12 md:pl-0 md:text-right group hover-trigger">
+
+                <!-- Item 2 -->
+                <div class="relative z-10 mb-16 md:mb-20 md:w-1/2 md:mr-auto md:pr-12 pl-12 md:pl-0 md:text-right group hover-trigger timeline-item">
                     <div class="absolute left-1.5 md:left-auto md:-right-3 top-0 w-6 h-6 bg-gray-100 dark:bg-black border-4 border-fusion-500 rounded-full group-hover:scale-125 transition-transform duration-300 shadow-[0_0_15px_#d946ef]"></div>
                     <div class="glass-card p-6 md:p-8 rounded-xl relative shadow-lg">
                         <span class="text-fusion-600 dark:text-fusion-400 font-mono text-sm mb-2 block">Sep 2020 - Aug 2023</span>
@@ -602,7 +616,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="relative z-10 md:w-1/2 md:ml-auto md:pl-12 pl-12 group hover-trigger">
+
+                <!-- Item 3 -->
+                <div class="relative z-10 md:w-1/2 md:ml-auto md:pl-12 pl-12 group hover-trigger timeline-item">
                     <div class="absolute left-1.5 md:-left-3 top-0 w-6 h-6 bg-gray-100 dark:bg-black border-4 border-green-500 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
                     <div class="glass-card p-6 md:p-8 rounded-xl relative shadow-lg">
                         <span class="text-green-600 dark:text-green-400 font-mono text-sm mb-2 block">June 2025</span>
@@ -617,82 +633,57 @@
         </div>
     </section>
 
-    <!-- SKILLS -->
+    <!-- SKILLS (Redesigned as Boxes) -->
     <section id="skills" class="py-24 md:py-32 px-4 md:px-6">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                <div>
-                    <h2 class="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white mb-4">Elemental <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 to-fusion-500">Stack</span></h2>
-                    <p class="text-gray-600 dark:text-gray-400 max-w-md">My technical arsenal arranged by atomic weight and category.</p>
+            <h2 class="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white mb-16 text-center">Elemental <span class="text-transparent bg-clip-text bg-gradient-to-r from-atom-500 to-fusion-500">Stack</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Chemistry Box -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-atom-500 hover-trigger group">
+                    <div class="w-12 h-12 bg-atom-100 dark:bg-atom-900/50 rounded-lg flex items-center justify-center text-atom-500 mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-flask text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Chemistry</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-atom-500"></span> OriginPro</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-atom-500"></span> Chemdraw</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-atom-500"></span> Gauss View</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-atom-500"></span> NMR Spectroscopy</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-atom-500"></span> UV-Vis Analysis</li>
+                    </ul>
                 </div>
-                <div class="flex flex-wrap gap-4 text-sm font-mono">
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 bg-atom-500/20 border border-atom-500"></span> Chemistry</div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 bg-fusion-500/20 border border-fusion-500"></span> Creative</div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 bg-green-500/20 border border-green-500"></span> Tools</div>
+
+                <!-- Creative Box -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-fusion-500 hover-trigger group">
+                    <div class="w-12 h-12 bg-fusion-100 dark:bg-fusion-900/50 rounded-lg flex items-center justify-center text-fusion-500 mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-palette text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Creative</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-fusion-500"></span> Photoshop</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-fusion-500"></span> Illustrator</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-fusion-500"></span> Figma</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-fusion-500"></span> Blender 3D</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-fusion-500"></span> DaVinci Resolve</li>
+                    </ul>
                 </div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
-                    <span class="element-number text-atom-600 dark:text-atom-400">01</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Or</span>
-                    <span class="element-name text-atom-500 dark:text-atom-300">OriginPro</span>
+
+                <!-- Tools Box -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-green-500 hover-trigger group">
+                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center text-green-500 mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-toolbox text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Tools</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Microsoft Excel</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> PowerBI</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Project Mgmt.</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Data Analysis</li>
+                    </ul>
                 </div>
-                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
-                    <span class="element-number text-atom-600 dark:text-atom-400">02</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Cd</span>
-                    <span class="element-name text-atom-500 dark:text-atom-300">Chemdraw</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
-                    <span class="element-number text-atom-600 dark:text-atom-400">03</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Gv</span>
-                    <span class="element-name text-atom-500 dark:text-atom-300">Gauss View</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
-                    <span class="element-number text-atom-600 dark:text-atom-400">04</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Nm</span>
-                    <span class="element-name text-atom-500 dark:text-atom-300">NMR Spec</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 14, 165, 233;">
-                    <span class="element-number text-atom-600 dark:text-atom-400">05</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Uv</span>
-                    <span class="element-name text-atom-500 dark:text-atom-300">UV-Vis</span>
-                </div>
-                <div class="hidden lg:block"></div>
-                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
-                    <span class="element-number text-fusion-600 dark:text-fusion-400">06</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Ps</span>
-                    <span class="element-name text-fusion-500 dark:text-fusion-300">Photoshop</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
-                    <span class="element-number text-fusion-600 dark:text-fusion-400">07</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Ai</span>
-                    <span class="element-name text-fusion-500 dark:text-fusion-300">Illustrator</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
-                    <span class="element-number text-fusion-600 dark:text-fusion-400">08</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Fi</span>
-                    <span class="element-name text-fusion-500 dark:text-fusion-300">Figma</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
-                    <span class="element-number text-fusion-600 dark:text-fusion-400">09</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Bl</span>
-                    <span class="element-name text-fusion-500 dark:text-fusion-300">Blender</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 217, 70, 239;">
-                    <span class="element-number text-fusion-600 dark:text-fusion-400">10</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Da</span>
-                    <span class="element-name text-fusion-500 dark:text-fusion-300">DaVinci</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 34, 197, 94;">
-                    <span class="element-number text-green-600 dark:text-green-400">11</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Xl</span>
-                    <span class="element-name text-green-600 dark:text-green-300">Excel</span>
-                </div>
-                <div class="element-card hover-trigger" style="--glow-color: 34, 197, 94;">
-                    <span class="element-number text-green-600 dark:text-green-400">12</span>
-                    <span class="element-symbol text-gray-900 dark:text-white">Bi</span>
-                    <span class="element-name text-green-600 dark:text-green-300">PowerBI</span>
-                </div>
+
             </div>
         </div>
     </section>
@@ -810,11 +801,11 @@
                 } else {
                     if (this.x !== this.baseX) {
                         let dx = this.x - this.baseX;
-                        this.x -= dx / 20; // Slower return
+                        this.x -= dx / 20; 
                     }
                     if (this.y !== this.baseY) {
                         let dy = this.y - this.baseY;
-                        this.y -= dy / 20; // Slower return
+                        this.y -= dy / 20;
                     }
                 }
             }
@@ -824,7 +815,6 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             particles = [];
-            // Optimization: Much fewer particles on mobile (divisor 15000 vs 9000)
             let divider = window.innerWidth < 768 ? 15000 : 9000;
             let numberOfParticles = (canvas.width * canvas.height) / divider;
             for (let i = 0; i < numberOfParticles; i++) {
@@ -838,7 +828,6 @@
                 particles[i].draw();
                 particles[i].update();
                 
-                // Draw connections
                 for (let j = i; j < particles.length; j++) {
                     let dx = particles[i].x - particles[j].x;
                     let dy = particles[i].y - particles[j].y;
@@ -865,15 +854,123 @@
         initCanvas();
         animateCanvas();
 
-        // --- 3. Scroll Progress ---
+        // --- 3. Scroll Progress & Timeline Animation ---
+        const timelineLine = document.getElementById('timeline-line');
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const aboutText = document.getElementById('about-text');
+        
+        // About Text Animation Logic - UPDATED with Gradients
+        const aboutContent = "I bridge the gap between <span class='text-transparent bg-clip-text bg-gradient-to-r from-atom-400 to-atom-600 font-bold'>Scientific Research</span> and <span class='text-transparent bg-clip-text bg-gradient-to-r from-fusion-400 to-fusion-600 font-bold'>Creative Strategy</span>. Merging analytical precision with artistic intuition to deliver unique solutions.";
+        let aboutTyped = false;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('timeline-item')) {
+                        entry.target.classList.add('visible');
+                    }
+                    if (entry.target.id === 'about-text' && !aboutTyped) {
+                        aboutTyped = true;
+                        typeWriter(entry.target, aboutContent, 30);
+                    }
+                }
+            });
+        }, { threshold: 0.2 });
+
+        timelineItems.forEach(item => observer.observe(item));
+        observer.observe(aboutText);
+
+        // Advanced Typewriter that handles HTML tags
+        function typeWriter(element, text, speed) {
+            let i = 0;
+            let buffer = ""; // Maintains the current HTML string state
+            element.innerHTML = "";
+            
+            function type() {
+                if (i < text.length) {
+                    // Check if we are at the start of an HTML tag
+                    if (text.charAt(i) === '<') {
+                        // Extract the entire tag (e.g., <span ...>)
+                        let tag = '';
+                        while (i < text.length && text.charAt(i) !== '>') {
+                            tag += text.charAt(i);
+                            i++;
+                        }
+                        if (i < text.length) {
+                            tag += '>'; // Add the closing bracket
+                            i++;
+                        }
+                        buffer += tag;
+                        element.innerHTML = buffer;
+                        // Recursively call type immediately to process the next character (content inside tag)
+                        // without a delay, so tags render instantly
+                        type();
+                    } else {
+                        // It's a normal character, type it with delay
+                        buffer += text.charAt(i);
+                        element.innerHTML = buffer;
+                        i++;
+                        setTimeout(type, speed);
+                    }
+                }
+            }
+            type();
+        }
+
         window.addEventListener('scroll', () => {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             document.getElementById('scroll-progress').style.width = scrolled + "%";
+
+            // Timeline Scroll Logic
+            const experienceSection = document.getElementById('experience');
+            const rect = experienceSection.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+            
+            if (rect.top < viewHeight && rect.bottom > 0) {
+                let percentage = ((viewHeight - rect.top) / (viewHeight + rect.height)) * 100;
+                // Clamp and amplify effect for timeline
+                percentage = Math.min(Math.max((percentage - 10) * 1.5, 0), 100);
+                if (timelineLine) timelineLine.style.height = `${percentage}%`;
+            }
         });
 
-        // --- 4. Mobile Menu & Back Button ---
+        // --- 4. Hero Typewriter Animation ---
+        const heroTypewriter = document.getElementById('hero-typewriter');
+        const heroWords = ["Alchemist", "Web Dev.", "Artist", "Designer"];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 200;
+
+        function animateHero() {
+            const currentWord = heroWords[wordIndex];
+            
+            if (isDeleting) {
+                heroTypewriter.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 100;
+            } else {
+                heroTypewriter.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 150;
+            }
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                isDeleting = true;
+                typeSpeed = 2000; // Pause at end
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % heroWords.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(animateHero, typeSpeed);
+        }
+        document.addEventListener('DOMContentLoaded', animateHero);
+
+        // --- 5. Mobile Menu & Back Button ---
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileLinks = document.querySelectorAll('.mobile-link');
@@ -911,12 +1008,11 @@
         mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
         if(mobileBackBtn) mobileBackBtn.addEventListener('click', toggleMenu);
 
-        // --- 5. Theme Toggle (Forced Default Dark) ---
+        // --- 6. Theme Toggle (Forced Default Dark) ---
         const themeInputs = document.querySelectorAll('.theme-checkbox');
         const html = document.documentElement;
 
         function initTheme() {
-            // Priority: LocalStorage -> Default to DARK (ignore system pref if not set, treat null as dark)
             const storedTheme = localStorage.getItem('theme');
             const isDark = storedTheme === 'dark' || storedTheme === null; 
             
@@ -949,6 +1045,7 @@
             const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
             const isChecked = event.target.checked;
 
+            // Slowed down transition from 400ms to 750ms for "soother" feel
             const transition = document.startViewTransition(() => {
                 if (isChecked) {
                     html.classList.add('dark');
@@ -963,7 +1060,7 @@
             transition.ready.then(() => {
                 document.documentElement.animate(
                     { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`] },
-                    { duration: 400, easing: 'ease-in-out', pseudoElement: '::view-transition-new(root)' }
+                    { duration: 750, easing: 'ease-in-out', pseudoElement: '::view-transition-new(root)' }
                 );
             });
         }
